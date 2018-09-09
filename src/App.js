@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-
+import uniqid from 'uniqid';
+import axios from 'axios';
 
 class App extends Component {
     constructor(props) {
@@ -7,14 +8,24 @@ class App extends Component {
 
         this.state = {
             inputText: 'abc',
-            list: ['xfsfsa']
+            list: [{
+                title: 'Some',
+                id: uniqid(),
+                done: false,
+            }]
         };
 
     }
 
     addToList() {
-      this.setState(
-        {list: [...this.state.list, this.state.inputText],
+      const list = this.state.list;
+      list.push({
+          title: this.state.inputText,
+          id: uniqid(),
+          done: false
+      });
+        this.setState({
+        list: list,
         inputText: ''
       });
     }
@@ -31,7 +42,40 @@ class App extends Component {
     }
 
     loadTodo(){
-        console.log('Load');
+        let list = this.state.list;
+        axios.get('https://jsonplaceholder.typicode.com/todos')
+            .then(function (response) {
+                let todos = response.data;
+                console.log(todos);
+                todos.map(el => ({
+                    ...el,
+                    done: el.completed
+                }));
+                list.concat(todos);
+
+            })
+            .catch(function (error) {
+                console.log('ERROR', error);
+            });
+        this.setState({
+            list: list
+        });
+    }
+
+    deleteItem(id){
+        this.setState({
+            list: [...this.state.list.filter(el => el.id !== id)],
+        })
+
+    }
+
+    done(id){
+        console.log('done');
+        const list = this.state.list;
+        list.map(el => el.id === id ? el.done = !el.done : '');
+        this.setState({
+            list: list
+        })
     }
 
     render() {
@@ -69,23 +113,18 @@ class App extends Component {
                             <th className="th">{}</th>
                         </tr>
                     </thead>
-                    <tdody id="list">{
-                        this.state.list.map((el, cnt) =>
-                            <tr>
-                                <td className="done">{el}</td>
+                    <tbody id="list">{
+                        this.state.list.map((el) =>
+                            <tr key={el.id}>
+                                <td className={el.done + ""}>{el.id}{el.title}</td>
                                 <td className="th">
-                                    <button className="btn btn-outline-success" key="0">Done</button>
-                                    <i key={cnt} className="fas fa-backspace">{}</i>
+                                    <button className="btn btn-outline-success" onClick={ () => this.done(el.id) }>Done</button>
+                                    <i className="fas fa-backspace" onClick={() => this.deleteItem(el.id) }>{}</i>
                                 </td>
                             </tr>
                         )
-                    }</tdody>
+                    }</tbody>
                 </table>
-
-                <ul>
-
-                </ul>
-
             </div>
         );
     }
