@@ -2,47 +2,51 @@ import React, {Component} from 'react';
 
 class Table extends Component {
 
-  functionDone(id){
+  functionDone(id) {
     const newList = this.props.list;
     let indexOfItem = newList.findIndex(el => el.id === id);
-    //newList.map(el => el.id === id ? indexOfItem = newList.indexOf(el) : '');
     newList[indexOfItem].done = !newList[indexOfItem].done;
     this.props.onChange(newList);
   }
 
-  saveEditedItem() {
-    const id = this.props.editedItem.id;
-    const index = this.props.list.findIndex(el => el.id === id);
-    const newList = this.props.list;
-    newList[index] = this.props.editedItem;
-    this.props.saveEditedItem(newList);
+  changeEditedItem(el){
+    const arg = {...el};
+    this.props.editItem(arg);
   }
 
-  editForm(el) {
-    this.props.editItem(el);
+  editForm(el){
     return (
       <div>
         <input
-          type="text"
+          className="input"
           value={this.props.editedItem.title}
-          onChange={(e) => this.props.changeEditedInput(e.target.value)}
+          onChange={(e) => this.changeInput(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={() => this.saveEditedItem()}>Save</button>
+        <button className="save-button" onClick={() => this.saveEditedItem()}>Save</button>
       </div>
     )
   }
 
-  functionDeleteItem(id){
+  saveEditedItem(){
+    this.props.saveEditedItem();
+  }
+
+  changeInput(value){
+    const el = this.props.editedItem;
+    el.title = value;
+    this.props.editItem(el);
+  }
+
+
+  functionDeleteItem(id) {
     let newList = this.props.list;
     let indexOfItem;
     newList.map(el => el.id === id ? indexOfItem = newList.indexOf(el) : '');
     newList = newList.filter(el => el !== newList[indexOfItem]);
-    console.log(indexOfItem, '***');
     this.props.onChange(newList);
   }
 
   render() {
-    console.log(this.props.list);
     return (
       <div>
         <table className="table">
@@ -60,7 +64,7 @@ class Table extends Component {
                 </td>
                 <td className="th">
                   <button className="btn btn-outline-success" onClick={() => this.functionDone(el.id)}>Done</button>
-                  <button className="btn btn-primary" onClick={() => this.editForm(el)}>Edit</button>
+                  <button className="btn btn-primary" onClick={() => this.changeEditedItem(el)}>Edit</button>
                   <i className="fas fa-backspace" onClick={() => this.functionDeleteItem(el.id)}>{}</i>
                 </td>
               </tr>
@@ -71,4 +75,5 @@ class Table extends Component {
     )
   }
 }
+
 export default Table;

@@ -25,12 +25,10 @@ class App extends Component {
   }
 
   changeInput(value) {
-    console.log('change input');
     this.setState({inputText: value})
   }
 
   done(id) {
-    console.log('done');
     const list = this.state.list;
     list.map(el => el.id === id ? el.done = !el.done : '');
     this.setState({
@@ -38,16 +36,8 @@ class App extends Component {
     })
   }
 
-  deleteItem(id) {
-    this.setState({
-      list: [...this.state.list.filter(el => el.id !== id)],
-    })
-
-  }
-
-  editItem(el) {
-    console.log(el);
-    this.setState({isEdited: true, editedItem: el});
+  editItem(arg) {
+    this.setState({isEdited: true, editedItem: arg});
   }
 
   changeEditedInput(value) {
@@ -59,11 +49,15 @@ class App extends Component {
     })
   }
 
-  saveEditedItem(newList) {
+  saveEditedItem() {
+    const newItem = {...this.state.editedItem};
+    const index = this.state.list.findIndex(el => el.id === newItem.id);
+    const newList = [...this.state.list];
+    newList[index] = newItem;
     this.setState({
       list: newList,
+      isEdited: false,
       editedItem: {},
-      isEdited: false
     });
   }
 
@@ -72,11 +66,9 @@ class App extends Component {
       list: arg,
       inputText: '',
     });
-    console.log(this.state.inputText);
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className="container">
         <h1>TODO List</h1>
@@ -102,11 +94,10 @@ class App extends Component {
         onChange={(arg) => this.changeList(arg)}
         editedItem={this.state.editedItem}
         editItem={(arg) => this.editItem(arg)}
+        saveEditedItem={() => this.saveEditedItem()}
         changeEditedInput={(arg) => this.changeEditedInput(arg)}
-        saveEditedItem={(newList) => this.saveEditedItem(newList)}
         isEdited={this.state.isEdited}
         />
-
       </div>
     );
   }
