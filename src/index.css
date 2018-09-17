@@ -5,3 +5,9 @@
   text-align: right;
   border-spacing: 10px;
 }
+.input{
+  height: 35px;
+}
+.save-button{
+  height: 35px;
+}

@@ -1,19 +1,22 @@
 import React, {Component} from 'react';
 import uniqid from 'uniqid';
+import AddToDo from './addToDoList'
+import RemoveAllItems from './remove-all-items'
+import Table from './table'
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      inputText: 'abc',
       isEdited: false,
       editedItem: {},
+      inputText: '',
       list: [{
         title: 'Some',
         id: uniqid(),
         done: false
-      },{
+      }, {
         title: 'Google',
         id: uniqid(),
         done: false
@@ -21,32 +24,11 @@ class App extends Component {
     };
   }
 
-  addToList() {
-    const list = this.state.list;
-    list.push({
-      title: this.state.inputText,
-      id: uniqid(),
-      done: false
-    });
-    this.setState({
-      list: list,
-      inputText: ''
-    });
-  }
-
   changeInput(value) {
     this.setState({inputText: value})
   }
 
-  removeAllItems() {
-    this.setState({
-      list: [],
-      inputText: ''
-    })
-  }
-
   done(id) {
-    console.log('done');
     const list = this.state.list;
     list.map(el => el.id === id ? el.done = !el.done : '');
     this.setState({
@@ -54,19 +36,11 @@ class App extends Component {
     })
   }
 
-  deleteItem(id) {
-    this.setState({
-      list: [...this.state.list.filter(el => el.id !== id)],
-    })
-
+  editItem(arg) {
+    this.setState({isEdited: true, editedItem: arg});
   }
 
-  editItem(el) {
-    console.log(el);
-    this.setState({ isEdited: true, editedItem: el });
-  }
-
-  changeEditedInput(value){
+  changeEditedInput(value) {
     this.setState({
       editedItem: {
         ...this.state.editedItem,
@@ -76,82 +50,54 @@ class App extends Component {
   }
 
   saveEditedItem() {
-    const id = this.state.editedItem.id;
-    const index = this.state.list.findIndex(el => el.id === id);
-    const newList = this.state.list;
-    newList[index] = this.state.editedItem;
-
+    const newItem = {...this.state.editedItem};
+    const index = this.state.list.findIndex(el => el.id === newItem.id);
+    const newList = [...this.state.list];
+    newList[index] = newItem;
     this.setState({
       list: newList,
+      isEdited: false,
       editedItem: {},
-      isEdited: false
     });
-    console.log(index);
   }
 
-  editForm() {
-    return (
-      <div>
-        <input
-          type="text"
-          value={this.state.editedItem.title}
-          onChange={(e) => this.changeEditedInput(e.target.value)}
-        />
-        <button className="btn btn-primary" onClick={() => this.saveEditedItem()}>Save</button>
-      </div>
-    )
+  changeList(arg){
+    this.setState({
+      list: arg,
+      inputText: '',
+    });
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className="container">
         <h1>TODO List</h1>
         <hr/>
         <div className="input-group mb-3">
           <input
-            type="text"
             className="form-control"
             placeholder="Text here"
-            aria-label="Text"
-            id="input"
             value={this.state.inputText}
             onChange={(e) => this.changeInput(e.target.value)}
           />
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => this.addToList()}
-          >Add to list
-          </button>
-          <button
-            className="btn btn-success"
-            onClick={() => this.removeAllItems()}
-          >Remove all items
-          </button>
+          <AddToDo
+            list={this.state.list}
+            inputText={this.state.inputText}
+            onChange={(arg) => this.changeList(arg)}
+          />
+          <RemoveAllItems
+            onChange={(arg) => this.changeList(arg)}
+          />
         </div>
-
-        <table className="table">
-          <thead>
-          <tr>
-            <th scope="col">My List</th>
-            <th className="th">{}</th>
-          </tr>
-          </thead>
-          <tbody id="list">{
-            this.state.list.map((el) =>
-              <tr key={el.id}>
-                <td className={el.done + ""}>
-                  {el.title}
-                </td>
-                <td className="th">
-                  <button className="btn btn-outline-success" onClick={() => this.done(el.id)}>Done</button>
-                  <button className="btn btn-primary" onClick={() => this.editItem(el)}>Edit</button>
-                  <i className="fas fa-backspace" onClick={() => this.deleteItem(el.id)}>{}</i>
-                </td>
-              </tr>
-            )}</tbody>
-        </table>
-        {this.state.isEdited && this.editForm()}
+        <Table
+        list={this.state.list}
+        onChange={(arg) => this.changeList(arg)}
+        editedItem={this.state.editedItem}
+        editItem={(arg) => this.editItem(arg)}
+        saveEditedItem={() => this.saveEditedItem()}
+        changeEditedInput={(arg) => this.changeEditedInput(arg)}
+        isEdited={this.state.isEdited}
+        />
       </div>
     );
   }
