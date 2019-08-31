@@ -1,16 +1,32 @@
 import React, {Component} from 'react';
 import uniqid from 'uniqid';
+import axios from 'axios';
 
 class AddToDo extends Component {
 
   addToDoList() {
-    const newList = this.props.list;
-    newList.push({
-      title: this.props.inputText,
-      id: uniqid(),
-      done: false
-    });
-    this.props.onChange(newList);
+    console.log(this.props.inputText);
+    this.props.loading();
+    let list = [];
+
+    if(this.props.inputText !== ''){
+      axios.post('http://localhost:5000/', {
+        title: this.props.inputText,
+        id: uniqid(),
+        done: false
+      })
+        .then( (response) => {
+          console.log(response.data.message);
+          this.props.onChange();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
+  addToDoList2(){
+
   }
 
   render() {

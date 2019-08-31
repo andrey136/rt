@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from "axios";
 
 class Table extends Component {
 
@@ -39,11 +40,18 @@ class Table extends Component {
 
 
   functionDeleteItem(id) {
-    let newList = this.props.list;
-    let indexOfItem;
-    newList.map(el => el.id === id ? indexOfItem = newList.indexOf(el) : '');
-    newList = newList.filter(el => el !== newList[indexOfItem]);
-    this.props.onChange(newList);
+    console.log(id);
+    axios({
+      method: 'delete',
+      url: 'http://localhost:5000/',
+      data: {id: id,}})
+      .then( (response) => {
+        console.log(response.data.message);
+        this.props.onChange();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
