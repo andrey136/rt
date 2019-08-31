@@ -5,6 +5,8 @@ import RemoveAllItems from './remove-all-items';
 import Table from './table';
 import axios from 'axios';
 import spinner from './25.svg';
+import Register from "./authorization";
+import './styles.css';
 
 class App extends Component {
   constructor(props) {
@@ -15,7 +17,8 @@ class App extends Component {
       editedItem: {},
       inputText: '',
       list: [],
-      loading: false
+      loading: false,
+      authorized: false,
     };
   }
 
@@ -56,8 +59,8 @@ class App extends Component {
     });
   }
 
-  changeList(){
-    this.setState({ loading: true });
+  changeList() {
+    this.setState({loading: true});
     let list = [...this.state.list];
     axios.get('http://localhost:5000/')
       .then((response) => {
@@ -65,32 +68,32 @@ class App extends Component {
         list = response.data;
         this.loadedElements(list);
         console.log(response.data);
-        this.setState({ loading: false });
+        this.setState({loading: false});
       })
-      .catch( (error) => {
+      .catch((error) => {
         // handle error
         console.log(error);
       });
   }
 
-  load(){
+  load() {
     console.log('LOAD');
-    this.setState({ loading: true });
+    this.setState({loading: true});
     let list = [...this.state.list];
     axios.get('http://localhost:5000/')
       .then((response) => {
         list = list.concat(...response.data);
         this.loadedElements(list);
-        this.setState({ loading: false });
+        this.setState({loading: false});
         console.log(response);
       })
-      .catch( (error) => {
+      .catch((error) => {
         // handle error
         console.log(error);
       });
   }
 
-  loadedElements(list){
+  loadedElements(list) {
     this.setState({
       loading: false,
       list: list,
@@ -99,41 +102,56 @@ class App extends Component {
     console.log('loadedElements', list);
   }
 
+  componentDidMount() {
+    if(localStorage.getItem("admin") !== null){
+      axios.get('http://localhost:5000/' + localStorage.getItem('admin'))
+        .then((response) => {
+          this.setState({ authorized: response.data.message })
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error);
+        });
+    }
+  }
+
   render() {
-    return (
-      <div className="container">
-        <h1>TODO List</h1>
-        <hr/>
-        <div className="input-group mb-3">
-          <input
-            className="form-control"
-            placeholder="Text here"
-            value={this.state.inputText}
-            onChange={(e) => this.changeInput(e.target.value)}
-          />
-          <AddToDo
-            loading={() => this.setState({ loading: true })}
-            list={this.state.list}
-            inputText={this.state.inputText}
-            onChange={(arg) => this.changeList(arg)}
-          />
-          <RemoveAllItems
-            onChange={(arg) => this.changeList(arg)}
-          />
-          <button className="btn btn-danger" onClick={() => this.load()}>Load</button>
-        </div>
-        { this.state.loading ?
-          <img src = {spinner} alt=""/>
-          :
-          <Table
-        list={this.state.list}
-        onChange={() => this.changeList()}
-        editedItem={this.state.editedItem}
-        editItem={(arg) => this.editItem(arg)}
-        saveEditedItem={() => this.saveEditedItem()}
-        changeEditedInput={(arg) => this.changeEditedInput(arg)}
-        isEdited={this.state.isEdited}
-        />}
+    return (<div>
+        {this.state.authorized ?
+          <div className="container">
+            <h1>TODO List</h1>
+            <hr/>
+            <div className="input-group mb-3">
+              <input
+                className="form-control"
+                placeholder="Text here"
+                value={this.state.inputText}
+                onChange={(e) => this.changeInput(e.target.value)}
+              />
+              <AddToDo
+                loading={() => this.setState({loading: true})}
+                list={this.state.list}
+                inputText={this.state.inputText}
+                onChange={(arg) => this.changeList(arg)}
+              />
+              <RemoveAllItems
+                onChange={(arg) => this.changeList(arg)}
+              />
+              <button className="btn btn-danger" onClick={() => this.load()}>Load</button>
+            </div>
+            {this.state.loading ?
+              <img src={spinner} alt=""/>
+              :
+              <Table
+                list={this.state.list}
+                onChange={() => this.changeList()}
+                editedItem={this.state.editedItem}
+                editItem={(arg) => this.editItem(arg)}
+                saveEditedItem={() => this.saveEditedItem()}
+                changeEditedInput={(arg) => this.changeEditedInput(arg)}
+                isEdited={this.state.isEdited}
+              />}
+          </div> : <Register/>}
       </div>
     );
   }
