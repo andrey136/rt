@@ -7,6 +7,10 @@ import axios from 'axios';
 import spinner from './25.svg';
 import Register from "./authorization";
 import './styles.css';
+import AuthHelperMethods from './components/AuthHelperMethods';
+import withAuth from './components/Authorization v.2-0';
+
+Auth = new AuthHelperMethods();
 
 class App extends Component {
   constructor(props) {
@@ -20,6 +24,11 @@ class App extends Component {
       loading: false,
       authorized: false,
     };
+  }
+
+  _handleLogout(){
+    this.Auth.logout();
+    this.props.history.replace('/login');
   }
 
   changeInput(value) {
@@ -116,7 +125,7 @@ class App extends Component {
   }
 
   render() {
-    return (<div>
+    return (/*<div>
         {this.state.authorized ?
           <div className="container">
             <h1>TODO List</h1>
@@ -151,10 +160,10 @@ class App extends Component {
                 changeEditedInput={(arg) => this.changeEditedInput(arg)}
                 isEdited={this.state.isEdited}
               />}
-          </div> : <Register/>}
-      </div>
+          </div> :*/ <Register/>/*}
+      </div>*/
     );
   }
 }
 
-export default App;
+export default withAuth(App);
