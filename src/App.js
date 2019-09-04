@@ -7,10 +7,10 @@ import axios from 'axios';
 import spinner from './25.svg';
 import Register from "./authorization";
 import './styles.css';
-import AuthHelperMethods from './components/AuthHelperMethods';
-import withAuth from './components/Authorization v.2-0';
+import AuthHelperMethods from './components/AuthHelperMethods.txt';
+import withAuth from './components/Authorization v.2-0.txt';
 
-Auth = new AuthHelperMethods();
+//Auth = new AuthHelperMethods();
 
 class App extends Component {
   constructor(props) {
@@ -112,10 +112,14 @@ class App extends Component {
   }
 
   componentDidMount() {
+    if(localStorage.getItem("admin") === "5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F")
+      this.setState({ authorized: true });
     if(localStorage.getItem("admin") !== null){
+      console.log('AXIOS');
       axios.get('http://localhost:5000/' + localStorage.getItem('admin'))
         .then((response) => {
-          this.setState({ authorized: response.data.message })
+          this.permission(response.data.message );
+          console.log(response.data.message)
         })
         .catch((error) => {
           // handle error
@@ -124,11 +128,21 @@ class App extends Component {
     }
   }
 
+  permission(){
+    this.setState({ authorized: true });
+  }
+
+  logout(){
+    localStorage.clear();
+    this.setState({ authorized: false })
+  }
+
   render() {
-    return (/*<div>
+    return (<div>
         {this.state.authorized ?
           <div className="container">
             <h1>TODO List</h1>
+            <a href="" onClick={() => this.logout()}>logout</a>
             <hr/>
             <div className="input-group mb-3">
               <input
@@ -160,10 +174,10 @@ class App extends Component {
                 changeEditedInput={(arg) => this.changeEditedInput(arg)}
                 isEdited={this.state.isEdited}
               />}
-          </div> :*/ <Register/>/*}
-      </div>*/
+          </div> : <Register refresh={() => this.permission()}/>}
+      </div>
     );
   }
 }
 
-export default withAuth(App);
+export default App;
