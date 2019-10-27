@@ -10,14 +10,13 @@ class AddToDo extends Component {
     let list = [];
 
     if(this.props.inputText !== ''){
-      axios.post('http://localhost:5000/', {
+      axios.post(`https://enigmatic-coast-85950.herokuapp.com/api/list/${localStorage.getItem('_id')}`, {
         title: this.props.inputText,
         id: uniqid(),
         done: false
       })
         .then( (response) => {
-          console.log(response.data.message);
-          this.props.onChange();
+          this.props.onChange(response.data);
         })
         .catch((error) => {
           console.log(error);

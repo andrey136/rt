@@ -55,14 +55,14 @@ class Register extends Component {
 
   authorize() {
     console.log('Authorize', `login: ${this.state.inputTextEmail}, password: ${this.state.inputTextPassword}`);
-    axios.post('http://localhost:5000/authorization',
+    axios.post('http://localhost:5000/api/authorization',
       {
         login: this.state.inputTextEmail,
         password: this.state.inputTextPassword
       })
       .then(res => {
-        console.log(res.data.message);
-        localStorage.setItem(res.data.status, res.data.id);
+        console.log(res.data);
+        localStorage.setItem(res.data.name, res.data.id);
         this.props.refresh();
       })
       .catch(error => {

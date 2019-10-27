@@ -5,17 +5,10 @@ class RemoveAllItems extends Component {
 
   removeAllItemsFunction() {
     const newList = [];
-    axios({
-      method: 'delete',
-      url: 'http://localhost:5000/deleteAll',
-      data: {id: "deleteALL"}})
-      .then( (response) => {
-        console.log(response.data);
-        this.props.onChange();
+    axios.delete(`https://enigmatic-coast-85950.herokuapp.com/api/list/deleteAll/${localStorage.getItem('_id')}`)
+      .then((res) => {
+        this.props.onChange(res.data.list);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
   render() {

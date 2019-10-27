@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import uniqid from 'uniqid';
 import AddToDo from './addToDoList';
 import RemoveAllItems from './remove-all-items';
 import Table from './table';
@@ -22,14 +21,10 @@ class App extends Component {
       inputText: '',
       list: [],
       loading: false,
-      authorized: false,
+      authorized: true,
     };
   }
 
-  _handleLogout(){
-    this.Auth.logout();
-    this.props.history.replace('/login');
-  }
 
   changeInput(value) {
     this.setState({inputText: value})
@@ -68,74 +63,39 @@ class App extends Component {
     });
   }
 
-  changeList() {
-    this.setState({loading: true});
-    let list = [...this.state.list];
-    axios.get('http://localhost:5000/')
-      .then((response) => {
-        console.log('Change', response.data.length);
-        list = response.data;
-        this.loadedElements(list);
-        console.log(response.data);
-        this.setState({loading: false});
-      })
-      .catch((error) => {
-        // handle error
-        console.log(error);
-      });
+  changeList(list) {
+    console.log("Change List", list);
+    this.loadedElements(list);
   }
 
   load() {
-    console.log('LOAD');
     this.setState({loading: true});
-    let list = [...this.state.list];
-    axios.get('http://localhost:5000/')
-      .then((response) => {
-        list = list.concat(...response.data);
-        this.loadedElements(list);
-        this.setState({loading: false});
-        console.log(response);
+    axios.get(`https://enigmatic-coast-85950.herokuapp.com/api/list/${localStorage.getItem('_id')}`)
+      .then((res) => {
+        this.loadedElements(res.data.list);
       })
       .catch((error) => {
-        // handle error
         console.log(error);
       });
   }
 
   loadedElements(list) {
+    console.log("LoadedElements", list);
     this.setState({
       loading: false,
       list: list,
       inputText: '',
     });
-    console.log('loadedElements', list);
   }
 
-  componentDidMount() {
-    if(localStorage.getItem("admin") === "5CFEE39D812461A67D865C819934895A3FB1A23934941847217A5B5ECB862FDBB2D41B538F")
-      this.setState({ authorized: true });
-    if(localStorage.getItem("admin") !== null){
-      console.log('AXIOS');
-      axios.get('http://localhost:5000/' + localStorage.getItem('admin'))
-        .then((response) => {
-          this.permission(response.data.message );
-          console.log(response.data.message)
-        })
-        .catch((error) => {
-          // handle error
-          console.log(error);
-        });
-    }
-  }
-
-  permission(){
-    this.setState({ authorized: true });
-  }
-
-  logout(){
-    localStorage.clear();
-    this.setState({ authorized: false })
-  }
+  // permission(){
+  //   this.setState({ authorized: true });
+  // }
+  //
+  // logout(){
+  //   localStorage.clear();
+  //   this.setState({ authorized: false })
+  // }
 
   render() {
     return (<div>
@@ -174,7 +134,7 @@ class App extends Component {
                 changeEditedInput={(arg) => this.changeEditedInput(arg)}
                 isEdited={this.state.isEdited}
               />}
-          </div> : <Register refresh={() => this.permission()}/>}
+          </div>: <Register refresh={() => this.permission()}/>}
       </div>
     );
   }
