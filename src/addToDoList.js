@@ -6,21 +6,23 @@ class AddToDo extends Component {
 
   addToDoList() {
     console.log(this.props.inputText);
-    this.props.loading();
-    let list = [];
-
-    if(this.props.inputText !== ''){
-      axios.post(`https://enigmatic-coast-85950.herokuapp.com/api/list/${localStorage.getItem('_id')}`, {
-        title: this.props.inputText,
-        id: uniqid(),
-        done: false
-      })
-        .then( (response) => {
-          this.props.onChange(response.data);
+    if(this.props.inputText !==''){
+      this.props.loading();
+      let list = [];
+      if(this.props.inputText !== ''){
+        axios.post(`https://frightful-flesh-30245.herokuapp.com/api/list/${localStorage.getItem('_id')}`, {
+          title: this.props.inputText,
+          id: uniqid(),
+          done: false
         })
-        .catch((error) => {
-          console.log(error);
-        });
+          .then( (response) => {
+            console.log('ADD', response.data);
+            this.props.onChange(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   }
 

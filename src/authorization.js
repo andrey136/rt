@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import AuthHelperMethods from "./components/AuthHelperMethods.txt";
+import './styles.css';
 
 class Register extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      inputTextName: '',
       inputTextEmail: '',
       inputTextPassword: '',
+      inputTextAge:'',
       warning: false,
       password: '',
+      login: true
     }
   }
 
@@ -18,70 +21,103 @@ class Register extends Component {
     this.setState({
       inputTextEmail: value,
     });
-    console.log(this.state.inputText, this.title);
+    console.log(value);
   }
 
   changeInputPassword(value){
     let password = this.state.password;
-    value.length < password ? password = password.slice(0, value.length) : password + value[value.length - 1];
+    value.length < password.length ? password = password.slice(0, value.length) : password = password + value[value.length - 1];
     this.setState({
       inputTextPassword: value,
       password: password,
     });
+    console.log(password);
   }
 
-  _handleKeyDownEmail(e) {
+  changeInputName(value){
+    this.setState({
+      inputTextName: value,
+    });
+    console.log(value);
+  }
+
+  changeInputAge(value){
+    this.setState({
+      inputTextAge: value,
+    });
+    console.log(value);
+  }
+
+  _handleKeyDown(e,curInp, nextInp) {
+    console.log(curInp, this.state[`inputText${curInp}`]);
     if (e.key === 'Enter') {
-      this.state.inputText === '' ?
+      this.state[`inputText${curInp}`] === '' ?
         this.setState({warning: true}) :
-        this.refs.password.focus();
-    }
-  }
-
-  _handleKeyDownPassword(e) {
-    if (e.key === 'Enter') {
-      this.state.inputText === '' ?
-        this.setState({warning: true}) :
-        this.refs.log_in.focus();
-    }
-  }
-
-  _handleKeyDownLogIn(e) {
-    if (e.key === 'Enter') {
-      e.target.blur();
-      this.authorize();
+        this.refs[nextInp].focus();
     }
   }
 
   authorize() {
-    console.log('Authorize', `login: ${this.state.inputTextEmail}, password: ${this.state.inputTextPassword}`);
-    axios.post('http://localhost:5000/api/authorization',
+    console.log(`${this.state.inputTextEmail},${this.state.password}`);
+    axios.post('https://frightful-flesh-30245.herokuapp.com/api/authorization/',
       {
         login: this.state.inputTextEmail,
-        password: this.state.inputTextPassword
+        password: this.state.password
       })
       .then(res => {
-        console.log(res.data);
-        localStorage.setItem(res.data.name, res.data.id);
+        console.log('RES.DATA', res.data._id);
+         localStorage.setItem("_id", res.data._id);
+         this.props.refresh();
+      })
+      .catch(err => {
+        console.log(`ERROR: ${err}`);
+      })
+  }
+
+  createANewUser(){
+    axios.post('https://frightful-flesh-30245.herokuapp.com/api/list/newUser',
+      {
+        login: this.state.inputTextEmail,
+        password: this.state.password,
+        name: this.state.inputTextName,
+        age: this.state.inputTextAge,
+      })
+      .then(res => {
+        console.log('RES.DATA', res.data._id);
+        localStorage.setItem("_id", res.data._id);
         this.props.refresh();
       })
-      .catch(error => {
-        console.log(`ERROR: ${error}`);
+      .catch(err => {
+        console.log(`ERROR: ${err}`);
       })
+  }
+
+  login(){
+    this.setState({
+      login: !this.state.login,
+      inputTextName: '',
+      inputTextAge: '',
+      inputTextEmail: '',
+      inputTextPassword: '',
+    })
   }
 
   render() {
     return (
       <div>
         <div className="register-form">
-          <h1>Register</h1>
-          <input type="text" placeholder="*login" ref="email" onChange={(e) => this.changeInputEmail(e.target.value)}
-                 onKeyDown={(e) => this._handleKeyDownEmail(e)} value={this.state.inputTextEmail}/>
-          <input type="text" placeholder="*password" ref="password" onChange={(e) => this.changeInputPassword(e.target.value)} onKeyDown={(e) => this._handleKeyDownPassword(e)}
+          <h1>{this.state.login ? "Log in" : "Sing up"}</h1>
+          {!this.state.login && <input type="text" placeholder="*name" ref="name" onChange={(e) => this.changeInputName(e.target.value)}
+                 onKeyDown={(e) => this._handleKeyDown(e,'Name','age')} value={this.state.inputTextName}/>}
+          {!this.state.login && <input type="text" placeholder="*age" ref="age" onChange={(e) => this.changeInputAge(e.target.value)}
+                                       onKeyDown={(e) => this._handleKeyDown(e,'Age', 'email')} value={this.state.inputTextAge}/>}
+          <input type="text" placeholder="*login" ref="email" onChange={(e) => this.changeInputEmail(e.target.value,)}
+                 onKeyDown={(e) => this._handleKeyDown(e, 'Email', 'password')} value={this.state.inputTextEmail}/>
+          <input type="text" placeholder="*password" ref="password" onChange={(e) => this.changeInputPassword(e.target.value)} onKeyDown={(e) => this._handleKeyDown(e, 'Password', 'log_in')}
           value={Array.from(Array(this.state.inputTextPassword.length), x =>'*').join('')} className="password"/>
           <div className="flex-center">
-            <a href="">Create an account</a>
-            <button className="btn btn-warning" ref="log_in" onKeyDown={(e) => this._handleKeyDownLogIn(e)} onClick={() => this.authorize()}>Log in
+            <p className="singUp" onClick={() => this.login()}>{this.state.login ? "Create an account" : "Log in"}</p>
+            <button className="btn btn-warning" ref="log_in" onClick={this.state.login ? () => this.authorize() : () => this.createANewUser()}>{this.state.login ?  "Log in" : "Sing up"}
             </button>
           </div>
         </div>

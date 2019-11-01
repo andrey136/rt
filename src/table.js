@@ -4,10 +4,12 @@ import axios from "axios";
 class Table extends Component {
 
   functionDone(id) {
-    const newList = this.props.list;
-    let indexOfItem = newList.findIndex(el => el.id === id);
-    newList[indexOfItem].done = !newList[indexOfItem].done;
-    this.props.onChange(newList);
+    axios.put(`https://frightful-flesh-30245.herokuapp.com/api/list/changeDone/${localStorage.getItem("_id")}`, {"id": id})
+      .then((res) => {
+        console.log(res.data);
+        this.props.onChange(res.data);
+      })
+      .catch((err) => console.log('Error Done', err));
   }
 
   changeEditedItem(el){
@@ -43,11 +45,10 @@ class Table extends Component {
     console.log(id);
     axios({
       method: 'delete',
-      url: 'http://localhost:5000/',
+      url: `https://frightful-flesh-30245.herokuapp.com/api/list/deleteItem/${localStorage.getItem('_id')}`,
       data: {id: id,}})
       .then( (response) => {
-        console.log(response.data.message);
-        this.props.onChange();
+        this.props.onChange(response.data);
       })
       .catch((error) => {
         console.log(error);

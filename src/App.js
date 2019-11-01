@@ -3,11 +3,9 @@ import AddToDo from './addToDoList';
 import RemoveAllItems from './remove-all-items';
 import Table from './table';
 import axios from 'axios';
-import spinner from './25.svg';
+import spinner from './loading.svg';
 import Register from "./authorization";
 import './styles.css';
-import AuthHelperMethods from './components/AuthHelperMethods.txt';
-import withAuth from './components/Authorization v.2-0.txt';
 
 //Auth = new AuthHelperMethods();
 
@@ -20,8 +18,8 @@ class App extends Component {
       editedItem: {},
       inputText: '',
       list: [],
-      loading: false,
-      authorized: true,
+      loading: this.load(),
+      authorized: this.isUserAuthorized()
     };
   }
 
@@ -51,26 +49,31 @@ class App extends Component {
     })
   }
 
+  isUserAuthorized(){
+    console.log('AUTH');
+    return localStorage.getItem('_id') !== undefined && localStorage.getItem('_id') !== null;
+  }
+
   saveEditedItem() {
     const newItem = {...this.state.editedItem};
-    const index = this.state.list.findIndex(el => el.id === newItem.id);
-    const newList = [...this.state.list];
-    newList[index] = newItem;
-    this.setState({
-      list: newList,
-      isEdited: false,
-      editedItem: {},
-    });
+    axios.put(`https://frightful-flesh-30245.herokuapp.com/api/list/changeValue/${localStorage.getItem("_id")}`, newItem)
+      .then((res) => {
+        this.setState({
+          list: res.data,
+          isEdited: false,
+          editedItem: {},
+        });
+      })
+      .catch((err) => console.log(err));
   }
 
   changeList(list) {
-    console.log("Change List", list);
     this.loadedElements(list);
   }
 
   load() {
     this.setState({loading: true});
-    axios.get(`https://enigmatic-coast-85950.herokuapp.com/api/list/${localStorage.getItem('_id')}`)
+    axios.get(`https://frightful-flesh-30245.herokuapp.com/api/list/${localStorage.getItem('_id')}`)
       .then((res) => {
         this.loadedElements(res.data.list);
       })
@@ -88,14 +91,30 @@ class App extends Component {
     });
   }
 
-  // permission(){
-  //   this.setState({ authorized: true });
-  // }
-  //
-  // logout(){
-  //   localStorage.clear();
-  //   this.setState({ authorized: false })
-  // }
+   componentDidMount() {
+     console.log('Component', localStorage.getItem('_id'));
+     axios.get(`https://frightful-flesh-30245.herokuapp.com/api/list/${localStorage.getItem('_id')}`)
+       .then(res => {
+         if(res.data._id !== undefined){
+           console.log('Axios', res.data._id);
+           localStorage.clear();
+           localStorage.setItem('_id', res.data._id);
+         }else{
+           localStorage.clear();
+           console.log('Wrong ID', localStorage.getItem('_id') !== undefined && localStorage.getItem('_id') !== null);
+         }
+       });
+   }
+
+  permision(){
+    this.setState({ authorized: true , loading: false});
+    this.load();
+  }
+
+  logout(){
+    localStorage.clear();
+    this.setState({ authorized: false })
+  }
 
   render() {
     return (<div>
@@ -120,21 +139,20 @@ class App extends Component {
               <RemoveAllItems
                 onChange={(arg) => this.changeList(arg)}
               />
-              <button className="btn btn-danger" onClick={() => this.load()}>Load</button>
             </div>
             {this.state.loading ?
               <img src={spinner} alt=""/>
               :
               <Table
                 list={this.state.list}
-                onChange={() => this.changeList()}
+                onChange={(arg) => this.changeList(arg)}
                 editedItem={this.state.editedItem}
                 editItem={(arg) => this.editItem(arg)}
                 saveEditedItem={() => this.saveEditedItem()}
                 changeEditedInput={(arg) => this.changeEditedInput(arg)}
                 isEdited={this.state.isEdited}
               />}
-          </div>: <Register refresh={() => this.permission()}/>}
+          </div>: <Register refresh={() => this.permision()}/>}
       </div>
     );
   }
