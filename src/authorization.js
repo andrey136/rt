@@ -19,7 +19,8 @@ class Register extends Component {
   }
 
   changeInputLogin(value) {
-    if(value[value.length - 1] !== ' '){ // no space in
+    value = value.replace(/ /g, '');
+    if (value[value.length - 1] !== ' ') { // no space in
       this.setState({
         inputTextLogin: value,
       });
@@ -28,19 +29,28 @@ class Register extends Component {
   }
 
   changeInputPassword(value) {
-    if(value[value.length - 1] !== ' '){
-      let password = this.state.password;
-      value.length < password.length ? password = password.slice(0, value.length) : password = password + value[value.length - 1];
-      this.setState({
-        inputTextPassword: value,
-        password: password,
-      });
-      console.log(password);
+    value = value.replace(/ /g, '');
+    let password = this.state.password;
+    if (value !== '') {
+      console.log(!value.split('').includes('*'));
+      if (value.replace(/\*/g, '').length > 1) {
+        password += value.replace(/\*/g, '');
+      } else {
+        if (value.length !== this.state.password.length) {
+          value.length < password.length ? password = password.slice(0, value.length) : password = password + value[value.length - 1];
+        }
+      }
+      value = Array.from(Array(value.length), x => '*').join('');
     }
+    this.setState({
+      inputTextPassword: value,
+      password: password,
+    });
+    console.log(password);
   }
 
   changeInputName(value) {
-    if(value[value.length - 1] !== ' '){
+    if (value[value.length - 1] !== ' ') {
       this.setState({
         inputTextName: value,
       });
@@ -62,13 +72,13 @@ class Register extends Component {
   _handleKeyDown(e, curInp, nextInp) {
     console.log(curInp, this.state[`inputText${curInp}`]);
     if (e.key === 'Enter') {
-        this.refs[nextInp].focus();
+      this.refs[nextInp].focus();
     }
   }
 
   authorize() {
     console.log(`${this.state.inputTextLogin},${this.state.password}`);
-    if(this.state.inputTextLogin !== '' && this.state.inputTextPassword !== ''){
+    if (this.state.inputTextLogin !== '' && this.state.inputTextPassword !== '') {
       this.setState({fillInputErr: false});
       axios.post('https://frightful-flesh-30245.herokuapp.com/api/authorization/',
         {
@@ -158,7 +168,7 @@ class Register extends Component {
           <input type="text" placeholder="*password" ref="password"
                  onChange={(e) => this.changeInputPassword(e.target.value)}
                  onKeyDown={(e) => this._handleKeyDown(e, 'Password', 'log_in')}
-                 value={Array.from(Array(this.state.inputTextPassword.length), x => '*').join('')}
+                 value={this.state.inputTextPassword}
                  className="password"/>
           <div className="flex-center">
             <p className="singUp" onClick={() => this.login()}>{this.state.login ? "Create an account" : "Log in"}</p>
