@@ -6,6 +6,7 @@ import axios from 'axios';
 import spinner from './loading.svg';
 import Register from "./authorization";
 import './styles.css';
+import {addToDoList} from "./functions";
 
 //Auth = new AuthHelperMethods();
 
@@ -116,6 +117,13 @@ class App extends Component {
     this.setState({ authorized: false })
   }
 
+  _handleKeyDown(e) {
+    console.log(e.key);
+    if (e.key === 'Enter') {
+      addToDoList(this.state.inputText, () => this.setState({loading: true}), (list) => this.changeList(list));
+    }
+  }
+
   render() {
     return (<div>
         {this.state.authorized ?
@@ -123,22 +131,26 @@ class App extends Component {
             <h1>TODO List</h1>
             <a href="" onClick={() => this.logout()}>logout</a>
             <hr/>
-            <div className="input-group mb-3">
+
+            <div className="input-group">
               <input
                 className="form-control"
                 placeholder="Text here"
                 value={this.state.inputText}
                 onChange={(e) => this.changeInput(e.target.value)}
+                onKeyDown={(e) => this._handleKeyDown(e)}
               />
-              <AddToDo
-                loading={() => this.setState({loading: true})}
-                list={this.state.list}
-                inputText={this.state.inputText}
-                onChange={(arg) => this.changeList(arg)}
-              />
-              <RemoveAllItems
-                onChange={(arg) => this.changeList(arg)}
-              />
+              <div className="input-group-append">
+                <AddToDo
+                  loading={() => this.setState({loading: true})}
+                  list={this.state.list}
+                  inputText={this.state.inputText}
+                  onChange={(arg) => this.changeList(arg)}
+                />
+                <RemoveAllItems
+                  onChange={(arg) => this.changeList(arg)}
+                />
+              </div>
             </div>
             {this.state.loading ?
               <img src={spinner} alt=""/>

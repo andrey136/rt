@@ -19,13 +19,15 @@ class Table extends Component {
 
   editForm(el){
     return (
-      <div>
+      <div className="input-group editForm">
         <input
-          className="input"
+          className="form-control"
           value={this.props.editedItem.title}
           onChange={(e) => this.changeInput(e.target.value)}
         />
-        <button className="save-button" onClick={() => this.saveEditedItem()}>Save</button>
+        <div className="input-group-append">
+          <button className="btn" onClick={() => this.saveEditedItem()}>Save</button>
+        </div>
       </div>
     )
   }
@@ -68,13 +70,13 @@ class Table extends Component {
           <tbody id="list">{
             this.props.list.map((el) =>
               <tr key={el.id}>
-                <td className={el.done + ""}>
-                  {el.title}
+                <td className={el.done + " Todo" }>
+                  <p>{el.title}</p>
                 </td>
                 <td className="th">
                   <button className="btn btn-outline-success" onClick={() => this.functionDone(el.id)}>Done</button>
                   <button className="btn btn-primary" onClick={() => this.changeEditedItem(el)}>Edit</button>
-                  <i className="fas fa-backspace" onClick={() => this.functionDeleteItem(el.id)}>{}</i>
+                  <button className="btn btn-danger" onClick={() => this.functionDeleteItem(el.id)}>Delete</button>
                 </td>
               </tr>
             )}</tbody>

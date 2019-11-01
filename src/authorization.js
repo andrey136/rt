@@ -8,97 +8,135 @@ class Register extends Component {
 
     this.state = {
       inputTextName: '',
-      inputTextEmail: '',
+      inputTextLogin: '',
       inputTextPassword: '',
-      inputTextAge:'',
-      warning: false,
+      inputTextAge: '',
       password: '',
-      login: true
+      login: true,
+      wrongLoginOrPassword: false,
+      fillInputErr: false,
     }
   }
 
-  changeInputEmail(value) {
-    this.setState({
-      inputTextEmail: value,
-    });
-    console.log(value);
+  changeInputLogin(value) {
+    if(value[value.length - 1] !== ' '){ // no space in
+      this.setState({
+        inputTextLogin: value,
+      });
+      console.log(value);
+    }
   }
 
-  changeInputPassword(value){
-    let password = this.state.password;
-    value.length < password.length ? password = password.slice(0, value.length) : password = password + value[value.length - 1];
-    this.setState({
-      inputTextPassword: value,
-      password: password,
-    });
-    console.log(password);
+  changeInputPassword(value) {
+    if(value[value.length - 1] !== ' '){
+      let password = this.state.password;
+      value.length < password.length ? password = password.slice(0, value.length) : password = password + value[value.length - 1];
+      this.setState({
+        inputTextPassword: value,
+        password: password,
+      });
+      console.log(password);
+    }
   }
 
-  changeInputName(value){
-    this.setState({
-      inputTextName: value,
-    });
-    console.log(value);
+  changeInputName(value) {
+    if(value[value.length - 1] !== ' '){
+      this.setState({
+        inputTextName: value,
+      });
+      console.log(value);
+    }
   }
 
-  changeInputAge(value){
-    this.setState({
-      inputTextAge: value,
-    });
-    console.log(value);
+  changeInputAge(value) {
+    const arr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""];
+    console.log(value[value.length]);
+    if ((arr.includes(value[value.length - 1]) || value === '') && value.length < 3) {
+      this.setState({
+        inputTextAge: value,
+      });
+      console.log(value);
+    }
   }
 
-  _handleKeyDown(e,curInp, nextInp) {
+  _handleKeyDown(e, curInp, nextInp) {
     console.log(curInp, this.state[`inputText${curInp}`]);
     if (e.key === 'Enter') {
-      this.state[`inputText${curInp}`] === '' ?
-        this.setState({warning: true}) :
         this.refs[nextInp].focus();
     }
   }
 
   authorize() {
-    console.log(`${this.state.inputTextEmail},${this.state.password}`);
-    axios.post('https://frightful-flesh-30245.herokuapp.com/api/authorization/',
-      {
-        login: this.state.inputTextEmail,
-        password: this.state.password
+    console.log(`${this.state.inputTextLogin},${this.state.password}`);
+    if(this.state.inputTextLogin !== '' && this.state.inputTextPassword !== ''){
+      this.setState({fillInputErr: false});
+      axios.post('https://frightful-flesh-30245.herokuapp.com/api/authorization/',
+        {
+          login: this.state.inputTextLogin,
+          password: this.state.password
+        })
+        .then(res => {
+          if (res.data.err !== undefined) {
+            this.wrongLoginOrPassword();
+            throw new Error(res.data.err);
+          } else {
+            localStorage.setItem("_id", res.data._id);
+            this.props.refresh();
+          }
+        })
+        .catch(err => {
+          console.log(`ERROR: ${err}`);
+        })
+    } else {
+      this.setState({
+        fillInputErr: true,
+        wrongLoginOrPassword: false,
       })
-      .then(res => {
-        console.log('RES.DATA', res.data._id);
-         localStorage.setItem("_id", res.data._id);
-         this.props.refresh();
-      })
-      .catch(err => {
-        console.log(`ERROR: ${err}`);
-      })
+    }
   }
 
-  createANewUser(){
-    axios.post('https://frightful-flesh-30245.herokuapp.com/api/list/newUser',
-      {
-        login: this.state.inputTextEmail,
-        password: this.state.password,
-        name: this.state.inputTextName,
-        age: this.state.inputTextAge,
+  createANewUser() {
+    if (this.state.inputTextName !== '' && this.state.inputTextAge !== '' && this.state.inputTextLogin !== '' && this.state.inputTextPassword !== '') {
+      axios.post('https://frightful-flesh-30245.herokuapp.com/api/list/newUser',
+        {
+          login: this.state.inputTextLogin,
+          password: this.state.password,
+          name: this.state.inputTextName,
+          age: this.state.inputTextAge,
+        })
+        .then(res => {
+          console.log('RES.DATA', res.data._id);
+          localStorage.setItem("_id", res.data._id);
+          this.props.refresh();
+        })
+        .catch(err => {
+          console.log(`ERROR: ${err}`);
+        })
+    } else {
+      this.setState({
+        fillInputErr: true,
       })
-      .then(res => {
-        console.log('RES.DATA', res.data._id);
-        localStorage.setItem("_id", res.data._id);
-        this.props.refresh();
-      })
-      .catch(err => {
-        console.log(`ERROR: ${err}`);
-      })
+    }
+
   }
 
-  login(){
+  wrongLoginOrPassword() {
+    console.log('HHHOOOO');
+    this.setState({
+      wrongLoginOrPassword: true,
+      fillInputErr: false,
+    });
+  }
+
+  login() {
     this.setState({
       login: !this.state.login,
       inputTextName: '',
       inputTextAge: '',
-      inputTextEmail: '',
+      inputTextLogin: '',
       inputTextPassword: '',
+      wrongLoginOrPassword: false,
+      fillInputErr: false,
     })
   }
 
@@ -107,26 +145,28 @@ class Register extends Component {
       <div>
         <div className="register-form">
           <h1>{this.state.login ? "Log in" : "Sing up"}</h1>
-          {!this.state.login && <input type="text" placeholder="*name" ref="name" onChange={(e) => this.changeInputName(e.target.value)}
-                 onKeyDown={(e) => this._handleKeyDown(e,'Name','age')} value={this.state.inputTextName}/>}
-          {!this.state.login && <input type="text" placeholder="*age" ref="age" onChange={(e) => this.changeInputAge(e.target.value)}
-                                       onKeyDown={(e) => this._handleKeyDown(e,'Age', 'email')} value={this.state.inputTextAge}/>}
-          <input type="text" placeholder="*login" ref="email" onChange={(e) => this.changeInputEmail(e.target.value,)}
-                 onKeyDown={(e) => this._handleKeyDown(e, 'Email', 'password')} value={this.state.inputTextEmail}/>
-          <input type="text" placeholder="*password" ref="password" onChange={(e) => this.changeInputPassword(e.target.value)} onKeyDown={(e) => this._handleKeyDown(e, 'Password', 'log_in')}
-          value={Array.from(Array(this.state.inputTextPassword.length), x =>'*').join('')} className="password"/>
+          {this.state.fillInputErr && <p className="error">Error: Fill all the fields</p>}
+          {!this.state.login &&
+          <input type="text" placeholder="*name" ref="name" onChange={(e) => this.changeInputName(e.target.value)}
+                 onKeyDown={(e) => this._handleKeyDown(e, 'Name', 'age')} value={this.state.inputTextName}/>}
+          {!this.state.login &&
+          <input type="text" placeholder="*age" ref="age" onChange={(e) => this.changeInputAge(e.target.value)}
+                 onKeyDown={(e) => this._handleKeyDown(e, 'Age', 'login')} value={this.state.inputTextAge}/>}
+          {this.state.wrongLoginOrPassword && <p className="error">Error: Wrong Password or Login</p>}
+          <input type="text" placeholder="*login" ref="login" onChange={(e) => this.changeInputLogin(e.target.value,)}
+                 onKeyDown={(e) => this._handleKeyDown(e, 'Login', 'password')} value={this.state.inputTextLogin}/>
+          <input type="text" placeholder="*password" ref="password"
+                 onChange={(e) => this.changeInputPassword(e.target.value)}
+                 onKeyDown={(e) => this._handleKeyDown(e, 'Password', 'log_in')}
+                 value={Array.from(Array(this.state.inputTextPassword.length), x => '*').join('')}
+                 className="password"/>
           <div className="flex-center">
             <p className="singUp" onClick={() => this.login()}>{this.state.login ? "Create an account" : "Log in"}</p>
-            <button className="btn btn-warning" ref="log_in" onClick={this.state.login ? () => this.authorize() : () => this.createANewUser()}>{this.state.login ?  "Log in" : "Sing up"}
+            <button className="btn btn-warning" ref="log_in"
+                    onClick={this.state.login ? () => this.authorize() : () => this.createANewUser()}>{this.state.login ? "Log in" : "Sing up"}
             </button>
           </div>
         </div>
-        { this.state.warning &&
-         <div className="warning">
-           <h2>Warning</h2>
-           <p>You should fill all the labels with *</p>
-         </div>
-        }
       </div>
     );
   }

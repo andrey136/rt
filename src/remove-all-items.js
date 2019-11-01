@@ -14,14 +14,13 @@ class RemoveAllItems extends Component {
 
   render() {
     return (
-      <div>
-        <button
-          className="btn btn-success"
-          onClick={() => this.removeAllItemsFunction()}
-        >Remove all items
-        </button>
-      </div>
+      <button
+        className="btn btn-success"
+        onClick={() => this.removeAllItemsFunction()}
+      >Remove all items
+      </button>
     )
   }
 }
+
 export default RemoveAllItems;

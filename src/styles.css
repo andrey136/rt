@@ -3,6 +3,10 @@ body, html{
     margin: 0;
 }
 
+p{
+    margin: 0;
+}
+
 body{
     width: 80%;
     min-width: 960px;
@@ -50,17 +54,69 @@ body{
 }
 
 .true{
-    text-decoration: line-through;
+    text-decoration: solid line-through yellow;
 }
 .th{
     text-align: right;
     border-spacing: 10px;
 }
-.input{
-    height: 35px;
+
+.th button{
+    border-radius: 0;
 }
-.save-button{
-    height: 35px;
+.th button:first-child{
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.th button:last-child{
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+td{
+    vertical-align: center;
+}
+
+.Todo p{
+    color: deepskyblue;
+    font-size: 1.4em;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.89);
+    letter-spacing: 4px;
+}
+
+.editForm{
+    width: 30%;
+}
+
+.editForm input{
+    border: 3px solid rgb(92, 152, 255);
+    border-radius: 5px 0 0 5px;
+    padding: 5px;
+    background: rgba(255, 181, 48, 0.52);
+    height: 100%;
+    color: black;
+}
+
+.editForm input:focus{
+    background: rgba(255, 181, 48, 0.52);
+    color: black;
+}
+
+
+.editForm button{
+    border: 1px solid rgba(47, 79, 79, 0.73);
+    background: white;
+    color: darkslategrey;
+    border-radius: 0 5px 5px 0;
+    height: 100%;
+    text-align: center;
+}
+
+.editForm button:hover{
+    transition: all 0.3s;
+    background: darkslategray;
+    color: white;
 }
 
 .singUp{
@@ -73,4 +129,9 @@ body{
 .singUp:hover{
     color: rgba(255, 91, 219, 0.99);
     cursor: pointer;
+}
+
+.error{
+    color: red;
+    margin: 0
 }
