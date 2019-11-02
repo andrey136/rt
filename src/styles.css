@@ -1,137 +1,311 @@
-body, html{
+body, html {
     padding: 0;
     margin: 0;
 }
 
-p{
+p {
     margin: 0;
 }
 
-body{
+body {
     width: 80%;
-    min-width: 960px;
     margin: 0 auto;
 }
 
-.flex-center{
+.flex-center {
     display: flex;
     justify-content: space-between;
 }
 
-.register-form .flex-center{
-    padding: 0;
-    margin-top: 30px;
+.container{
+    position: relative
+}
+@media only screen and (min-width: 750px) {
+    body{
+        min-width: 750px;
+    }
+
+    .register-form .flex-center {
+        padding: 0;
+        margin-top: 30px;
+    }
+
+    .register-form {
+        width: 600px;
+        border: 2px solid rgba(126, 85, 255, 0.62);
+        background: rgba(195, 217, 255, 0.8);
+        margin: 15% auto;
+        padding: 30px 40px;
+        border-radius: 15px;
+    }
+
+    .register-form h1 {
+        text-align: center;
+        font-size: 2.5em;
+        color: #282828;
+        font-family: Monaco Full Stack, Times, serif;
+    }
+
+    .register-form input {
+        width: 100%;
+        padding: 10px;
+        margin: 30px 0 0;
+    }
+
+    .register-form a {
+        font-size: 1.3em;
+    }
+
+    .password {
+        color: #575757;
+    }
+
+    .true {
+        text-decoration: solid line-through yellow;
+    }
+
+    .th {
+        text-align: right;
+        border-spacing: 10px;
+        min-width: 250px;
+        width: 30%;
+    }
+
+    .th button {
+        border-radius: 0;
+    }
+
+    .th button:first-child {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+
+    .th button:last-child {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+
+    td{
+        vertical-align: center;
+        width: 70%;
+    }
+
+    .Todo p {
+        color: deepskyblue;
+        font-size: 1.4em;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.89);
+        letter-spacing: 4px;
+    }
+
+    .editForm {
+        width: 50%;
+    }
+
+    .editForm input {
+        border: 3px solid rgb(92, 152, 255);
+        border-radius: 5px 0 0 5px;
+        padding: 5px;
+        background: rgba(255, 181, 48, 0.52);
+        color: black;
+    }
+
+    .editForm input:focus {
+        background: rgba(255, 181, 48, 0.52);
+        color: black;
+    }
+
+
+    .editForm button {
+        border: 1px solid rgba(47, 79, 79, 0.73);
+        background: white;
+        color: darkslategrey;
+        border-radius: 0 5px 5px 0;
+        height: 100%;
+        text-align: center;
+    }
+
+    .editForm button:hover {
+        transition: all 0.3s;
+        background: darkslategray;
+        color: white;
+    }
+
+    .singUp {
+        font-size: 1.4em;
+        color: #8a8fff;
+        text-decoration: underline;
+        margin: 0;
+    }
+
+    .singUp:hover {
+        color: rgba(255, 91, 219, 0.99);
+        cursor: pointer;
+    }
+
+    .error {
+        color: red;
+        margin: 0
+    }
+    .container{
+        min-width: 750px;
+    }
 }
 
-.register-form{
-    width: 600px;
-    border: 2px solid rgba(126, 85, 255, 0.62);
-    background: rgba(195, 217, 255, 0.8);
-    margin:15% auto;
-    padding: 30px 40px;
-    border-radius: 15px;
-}
+@media only screen and (max-width: 749px) {
+    .register-form .flex-center {
+        padding: 0;
+        margin-top: 30px;
+    }
 
-.register-form h1{
-    text-align: center;
-    font-size: 2.5em;
-    color: #282828;
-    font-family: Monaco Full Stack, Times, serif;
-}
+    .register-form {
+        width: 90%;
+        border: 2px solid rgba(126, 85, 255, 0.62);
+        background: rgba(195, 217, 255, 0.8);
+        padding: 30px 40px;
+        border-radius: 15px;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
 
-.register-form input{
-    width: 100%;
-    padding: 10px;
-    margin: 30px 0 0;
-}
+    .register-form h1 {
+        text-align: center;
+        font-size: 2.5em;
+        color: #282828;
+        font-family: Monaco Full Stack, Times, serif;
+    }
 
-.register-form a{
-    font-size: 1.3em;
-}
+    .register-form input {
+        width: 100%;
+        padding: 10px;
+        margin: 30px 0 0;
+    }
 
-.password{
-    color: #575757;
-}
+    .register-form a {
+        font-size: 1.3em;
+    }
 
-.true{
-    text-decoration: solid line-through yellow;
-}
-.th{
-    text-align: right;
-    border-spacing: 10px;
-}
+    .password {
+        color: #575757;
+    }
 
-.th button{
-    border-radius: 0;
-}
-.th button:first-child{
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-}
+    .input-group-append button:last-child{
+        display: none;
+    }
 
-.th button:last-child{
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-}
+    .input-group-append button:first-child{
+        display: initial;
+    }
 
-td{
-    vertical-align: center;
-}
+    #addToDoBtn{
+        border-top-right-radius: 15px;
+    }
 
-.Todo p{
-    color: deepskyblue;
-    font-size: 1.4em;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.89);
-    letter-spacing: 4px;
-}
+    .addToDoInp{
+        border-bottom-left-radius: 15px;
+        border-top-left-radius: 0;
+    }
 
-.editForm{
-    width: 30%;
-}
+    .table{
+        margin-top: 15px;
+        border-bottom: 0.25px solid rgba(196, 196, 196, 0.51);
+    }
 
-.editForm input{
-    border: 3px solid rgb(92, 152, 255);
-    border-radius: 5px 0 0 5px;
-    padding: 5px;
-    background: rgba(255, 181, 48, 0.52);
-    height: 100%;
-    color: black;
-}
+    .true p{
+        text-decoration: solid line-through yellow;
+    }
 
-.editForm input:focus{
-    background: rgba(255, 181, 48, 0.52);
-    color: black;
-}
+    .th {
+        text-align: right;
+        border-spacing: 5px;
+        width: 73px;
+    }
+
+    .th button {
+        border-radius: 0;
+        width: 73px;
+    }
+
+    .th button:first-child {
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+    .th button:last-child {
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+
+    .Todo{
+        position: relative;
+    }
+
+    .Todo p {
+        width: 100%;
+        color: deepskyblue;
+        font-size: 1.4em;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.89);
+        letter-spacing: 4px;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .editForm {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    .editForm input {
+        border: 3px solid rgb(92, 152, 255);
+        border-radius: 5px 0 0 5px;
+        padding: 5px;
+        background: rgba(255, 181, 48, 0.72);
+        color: black;
+    }
+
+    .editForm input:focus {
+        background: rgba(255, 181, 48, 0.52);
+        color: black;
+    }
 
 
-.editForm button{
-    border: 1px solid rgba(47, 79, 79, 0.73);
-    background: white;
-    color: darkslategrey;
-    border-radius: 0 5px 5px 0;
-    height: 100%;
-    text-align: center;
-}
+    .editForm button {
+        border: 1px solid rgba(47, 79, 79, 0.73);
+        background: white;
+        color: darkslategrey;
+        border-radius: 0 5px 5px 0;
+        height: 100%;
+        text-align: center;
+    }
 
-.editForm button:hover{
-    transition: all 0.3s;
-    background: darkslategray;
-    color: white;
-}
+    .editForm button:hover {
+        transition: all 0.3s;
+        background: darkslategray;
+        color: white;
+    }
 
-.singUp{
-    font-size: 1.4em;
-    color: #8a8fff;
-    text-decoration: underline;
-    margin: 0;
-}
+    .singUp {
+        font-size: 1.2em;
+        color: #8a8fff;
+        text-decoration: underline;
+        margin: 4px 0 0;
+        content: '';
+    }
 
-.singUp:hover{
-    color: rgba(255, 91, 219, 0.99);
-    cursor: pointer;
-}
+    .singUp:hover {
+        color: rgba(255, 91, 219, 0.99);
+        cursor: pointer;
+    }
 
-.error{
-    color: red;
-    margin: 0
+    .error {
+        color: orange;
+        margin: 0;
+    }
 }

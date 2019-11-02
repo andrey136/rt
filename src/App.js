@@ -128,13 +128,14 @@ class App extends Component {
     return (<div>
         {this.state.authorized ?
           <div className="container">
+
             <h1>TODO List</h1>
             <a href="" onClick={() => this.logout()}>logout</a>
             <hr/>
 
             <div className="input-group">
               <input
-                className="form-control"
+                className="form-control addToDoInp"
                 placeholder="Text here"
                 value={this.state.inputText}
                 onChange={(e) => this.changeInput(e.target.value)}

@@ -74,13 +74,14 @@ class Table extends Component {
                   <p>{el.title}</p>
                 </td>
                 <td className="th">
-                  <button className="btn btn-outline-success" onClick={() => this.functionDone(el.id)}>Done</button>
+                  <button className={`btn${window.innerWidth > 750 ? ' btn-outline-success' : ' btn-success'}`} onClick={() => this.functionDone(el.id)}>Done</button>
                   <button className="btn btn-primary" onClick={() => this.changeEditedItem(el)}>Edit</button>
                   <button className="btn btn-danger" onClick={() => this.functionDeleteItem(el.id)}>Delete</button>
                 </td>
               </tr>
             )}</tbody>
         </table>
+        {this.props.isEdited && <div id="editFormBlink"></div>}
         {this.props.isEdited && this.editForm()}
       </div>
     )

@@ -41,6 +41,8 @@ class Register extends Component {
         }
       }
       value = Array.from(Array(value.length), x => '*').join('');
+    } else {
+      password = '';
     }
     this.setState({
       inputTextPassword: value,
@@ -171,7 +173,7 @@ class Register extends Component {
                  value={this.state.inputTextPassword}
                  className="password"/>
           <div className="flex-center">
-            <p className="singUp" onClick={() => this.login()}>{this.state.login ? "Create an account" : "Log in"}</p>
+            <p className="singUp" onClick={() => this.login()}>{this.state.login ? (window.innerWidth > 500 ? "Create an account" : "Sing up") : "Log in"}</p>
             <button className="btn btn-warning" ref="log_in"
                     onClick={this.state.login ? () => this.authorize() : () => this.createANewUser()}>{this.state.login ? "Log in" : "Sing up"}
             </button>
